@@ -1,0 +1,9 @@
+# Java / Spring
+target/
+*.class
+.idea/
+
+# Angular
+node_modules/
+dist/
+.angular/

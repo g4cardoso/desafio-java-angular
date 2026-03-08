@@ -1,0 +1,92 @@
+.list-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th { background-color: #f8f9fa; color: #333; }
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-new {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-edit {
+    background-color: #ffc107; // Cor âmbar clássica de edição
+    color: #212529;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    &:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px); // Pequeno salto para dar profundidade
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  button:disabled {
+    background-color: #a0c4ff; // Um azul mais claro
+    cursor: not-allowed;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  .search-container {
+    margin-bottom: 20px;
+
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+
+      &:focus {
+        border-color: #007bff; // O azul que você já usa no projeto
+        box-shadow: 0 0 5px rgba(0,123,255,0.2);
+      }
+    }
+  }
+}

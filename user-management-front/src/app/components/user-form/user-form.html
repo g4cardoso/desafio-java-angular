@@ -1,0 +1,26 @@
+<div class="form-container">
+  <h2>{{tituloPagina}}</h2>
+
+  @if (mensageSucesso) {
+    <p lass="alert-success">{{ mensageSucesso }}</p>
+  }
+
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    <input formControlName="nome" placeholder="Nome Completo">
+    <input formControlName="email" placeholder="E-mail">
+    <input type="password" formControlName="senha" placeholder="Senha">
+    <input type="password" formControlName="confirmacaoSenha" placeholder="Confirmar Senha">
+
+
+    <button type="submit" [disabled]="form.invalid || carregando">
+      @if (carregando) {
+        <span>Salvando...</span>
+      } @else {
+        <span>{{textoBotao}}</span>
+      }
+    </button>
+
+    <button routerLink="/usuario" class="btn-new">Lista de usuarios</button>
+  </form>
+</div>

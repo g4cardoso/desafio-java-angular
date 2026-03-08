@@ -1,0 +1,41 @@
+<div class="list-container">
+  <h2>Usuários Cadastrados</h2>
+
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Pesquisar por nome..."
+      [(ngModel)]="filtroNome"
+      (input)="filtrarUsuarios()"
+      class="search-input"
+    >
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Nome</th>
+      <th>E-mail</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (u of usuarios; track u.id) {
+        <tr>
+          <td>{{ u.nome }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            <button class="btn-edit" (click)="editarUsuario(u)">Editar</button>
+            <button class="btn-delete" (click)="deletarUsuario(u.id!)">Excluir</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4" style="text-align: center;">Nenhum usuário encontrado.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <button routerLink="/cadastro" class="btn-new">Novo Cadastro</button>
+</div>

@@ -1,0 +1,62 @@
+name: CI Pipeline - Java & Angular
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # Provisionamento do Banco PostgreSQL para testes de integração 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: user_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # 1. Checkout do código [cite: 68]
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Preparação do ambiente Java 21 [cite: 69]
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 3. Execução do pipeline de build e testes (Unitários e Integração) [cite: 71]
+      - name: Build and Test Backend
+        run: mvn clean verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
+          SPRING_DATASOURCE_USERNAME: user
+          SPRING_DATASOURCE_PASSWORD: password
+
+      # 4. Build da imagem Docker da aplicação [cite: 72]
+      - name: Build Docker Image
+        run: |
+          docker build -t user-management-app:latest .
+
+      # 5. Smoke Test usando Docker [cite: 73]
+      - name: Smoke Test
+        run: |
+          docker compose up -d
+          sleep 15 # Tempo para a app subir
+          # Valida se o endpoint principal retorna resposta válida [cite: 74]
+          curl --fail http://localhost:8080/api/usuarios || exit 1
+          docker compose down
