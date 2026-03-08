@@ -55,6 +55,7 @@ jobs:
 
       # 5. Smoke Test usando Docker [cite: 73]
       - name: Smoke Test
+        working-directory: ./user-management
         run: |
           docker compose up -d
           sleep 15 # Tempo para a app subir
