@@ -41,6 +41,7 @@ jobs:
 
       # 3. Execução do pipeline de build e testes (Unitários e Integração) [cite: 71]
       - name: Build and Test Backend
+        working-directory: ./user-management
         run: mvn clean verify
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
