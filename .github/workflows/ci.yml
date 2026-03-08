@@ -51,7 +51,7 @@ jobs:
       # 4. Build da imagem Docker da aplicação [cite: 72]
       - name: Build Docker Image
         run: |
-          docker build -t user-management-app:latest .
+          docker build -t user-management-app:latest -f ./user-management/Dockerfile ./user-management
 
       # 5. Smoke Test usando Docker [cite: 73]
       - name: Smoke Test
