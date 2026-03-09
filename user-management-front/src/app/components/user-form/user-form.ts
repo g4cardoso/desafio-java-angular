@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User, UserService } from '../../services/user';
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
   styleUrl: './user-form.scss',
 })
 export class UserFormComponent implements OnInit {
-  idUsuarioEdicao: number | null = null;
+  idEdicaoUsuario: number | null = null;
   form: FormGroup;
   carregando = false;
 
@@ -26,6 +26,7 @@ export class UserFormComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
       nome: ['', [Validators.required]],
@@ -36,25 +37,26 @@ export class UserFormComponent implements OnInit {
   }
   ngOnInit(): void {
     const id = +this.route.snapshot.params['id'];
-    if (this.idUsuarioEdicao) {
+    if (this.idEdicaoUsuario) {
       this.form.get('email')?.disable();
     }
     if (id) {
-      this.idUsuarioEdicao = +id;
+      this.idEdicaoUsuario = +id;
       this.tituloPagina = 'Editar Usuário';
       this.textoBotao = 'Salvar Alterações';
       this.form.get('email')?.disable();
-      this.preencherDadosEdicao(this.idUsuarioEdicao);
+      this.preencherDadosEdicao(this.idEdicaoUsuario);
     }
   }
 
   salvar(): void {
     if (this.form.valid) {
+      console.log(this.form.value);
       this.carregando = true;
 
-      const operacao = this.idUsuarioEdicao
-        ? this.userService.atualizar(this.idUsuarioEdicao, this.form.value)
-        : this.userService.salvar(this.form.value);
+      const operacao = this.idEdicaoUsuario
+        ? this.userService.atualizar(this.idEdicaoUsuario, this.form.getRawValue())
+        : this.userService.salvar(this.form.getRawValue());
 
       operacao.subscribe({
         next: (res: any) => {
@@ -66,22 +68,20 @@ export class UserFormComponent implements OnInit {
             confirmButtonText: 'OK',
           }).then((result) => {
             if (result.isConfirmed) {
-              if (this.idUsuarioEdicao) {
-                this.router.navigate(['/usuario']).then(() => {
-                  this.carregando = false;
-                  window.location.reload();
-                });
-              } else {
-                this.router.navigate(['/cadastro']).then(() => {
-                  this.carregando = false;
-                  window.location.reload();
-                });
-              }
+              const rota = this.idEdicaoUsuario ? '/usuario' : '/cadastro';
+              this.router.navigate([rota]);
             }
           });
         },
         error: (err) => {
           console.log(err);
+          this.carregando = false;
+
+          this.form.patchValue({
+            senha:'',
+            confirmacaoSenha:"",
+          })
+          this.cdr.detectChanges();
           Swal.fire('Erro!', err.error?.message || 'Falha ao cadastrar', 'error');
         },
       });

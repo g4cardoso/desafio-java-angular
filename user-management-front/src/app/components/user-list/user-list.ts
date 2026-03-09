@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { User, UserService } from '../../services/user';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-list',
@@ -48,12 +49,27 @@ export class UserListComponent implements OnInit {
     this.router.navigate(['/cadastro', usuario.id]);
   }
 
-  deletarUsuario(id: number) {
+  deletarUsuario(id: number,nome:String) {
     this.changeDetectorRef.detectChanges();
-    if (confirm('Confirma exclusão do usuario?')) {
-      this.userService.deletar(id).subscribe(() => {
-        this.carregarUsuarios();
-      });
-    }
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: `Você deseja excluir o usuário ${nome}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deletar(id).subscribe(() => {
+          Swal.fire('Excluído!', 'O usuário foi removido com sucesso.', 'success');
+          this.carregarUsuarios();
+        },
+          error => {
+            Swal.fire('Erro!', 'Não foi possível excluir o usuário.', 'error');
+          });
+      }
+    });
   }
 }

@@ -26,7 +26,7 @@
           <td>{{ u.email }}</td>
           <td>
             <button class="btn-edit" (click)="editarUsuario(u)">Editar</button>
-            <button class="btn-delete" (click)="deletarUsuario(u.id!)">Excluir</button>
+            <button class="btn-delete" (click)="deletarUsuario(u.id!,u.nome)">Excluir</button>
           </td>
         </tr>
       } @empty {
