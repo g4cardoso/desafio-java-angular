@@ -1,16 +1,17 @@
 package com.desafio.usermanagement.service;
 
-import com.desafio.usermanagement.dto.UserDTO;
+import com.desafio.usermanagement.dto.UserRequestDTO;
+import com.desafio.usermanagement.dto.UserResponseDTO;
 import com.desafio.usermanagement.model.User;
 import com.desafio.usermanagement.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Incubating;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +30,15 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private UserDTO userDTO;
+
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
+
+    private UserRequestDTO userRequestDTO;
 
     @BeforeEach
     void setUp() {
-        userDTO = new UserDTO("Gabriel Cardoso",
+        userRequestDTO = new UserRequestDTO("Gabriel Cardoso",
                 "gabriel@example.com",
                 "123456",
                 "123456");
@@ -41,33 +46,28 @@ public class UserServiceTest {
 
     @Test
     void deveSalvarUsuarioComSucesso() {
-        // Arrange
         User userSalvo = new User();
         userSalvo.setId(1L);
-        userSalvo.setNome(userDTO.nome());
+        userSalvo.setNome(userRequestDTO.nome());
 
         when(userRepository.save(any(User.class))).thenReturn(userSalvo);
 
-        // Act
-        User resultado = userService.registrarUsuario(userDTO);
+        UserResponseDTO resultado = userService.registrarUsuario(userRequestDTO);
 
-        // Assert
         assertNotNull(resultado);
-        assertEquals("Gabriel Cardoso", resultado.getNome());
+        assertEquals("Gabriel Cardoso", resultado.nome());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void deveLancarExcecaoQuandoSenhasDiferentes() {
-        // Arrange
-        userDTO = new UserDTO("Gabriel Cardoso",
+        userRequestDTO = new UserRequestDTO("Gabriel Cardoso",
                 "gabriel@example.com",
                 "123456",
                 "654321");
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.registrarUsuario(userDTO);
+            userService.registrarUsuario(userRequestDTO);
         });
 
         assertEquals("As senhas não coincidem!", exception.getMessage());
@@ -85,21 +85,21 @@ public class UserServiceTest {
     @Test
     void deveAtualizarUsuarioComSucesso() {
         Long id = 1L;
-        UserDTO dto = new UserDTO("Novo Nome", "novo@email.com", "654321", "654321");
+        UserRequestDTO dto = new UserRequestDTO("Novo Nome", "novo@email.com", "654321", "654321");
         User userExistente = new User();
         userExistente.setId(id);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(userExistente));
         when(userRepository.save(any(User.class))).thenReturn(userExistente);
 
-        User atualizado = userService.atualizarUsuario(id, dto);
+        UserResponseDTO atualizado = userService.atualizarUsuario(id, dto);
 
-        assertEquals("Novo Nome", atualizado.getNome());
+        assertEquals("Novo Nome", atualizado.nome());
     }
 
     @Test
     void deveErroAtualizarInexistente() {
-        UserDTO dto = new UserDTO("Nome", "a@a.com", "123456", "123456");
+        UserRequestDTO dto = new UserRequestDTO("Nome", "a@a.com", "123456", "123456");
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> userService.atualizarUsuario(1L, dto));

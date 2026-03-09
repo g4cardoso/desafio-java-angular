@@ -1,12 +1,12 @@
 package com.desafio.usermanagement.controller;
 
 import com.desafio.usermanagement.dto.ApiResponse;
-import com.desafio.usermanagement.dto.UserDTO;
+import com.desafio.usermanagement.dto.UserRequestDTO;
+import com.desafio.usermanagement.dto.UserResponseDTO;
 import com.desafio.usermanagement.model.User;
 import com.desafio.usermanagement.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<User>> cadastro(@Valid @RequestBody UserDTO userDTO) {
-        var novoUsuario = userService.registrarUsuario(userDTO);
-        ApiResponse<User> response = new ApiResponse<>(
+    public ResponseEntity<ApiResponse<UserResponseDTO>> cadastro(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        var novoUsuario = userService.registrarUsuario(userRequestDTO);
+        ApiResponse<UserResponseDTO> response = new ApiResponse<>(
                 "usuario cadastrado com sucesso!!!", novoUsuario
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -37,10 +37,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> editar(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
-        User usuarioAtualizado = userService.atualizarUsuario(id, userDTO);
+    public ResponseEntity<ApiResponse<UserResponseDTO>> editar(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO usuarioAtualizado = userService.atualizarUsuario(id, userRequestDTO);
 
-        ApiResponse<User> response = new ApiResponse<>(
+        ApiResponse<UserResponseDTO> response = new ApiResponse<>(
                 "usuario alterado com sucesso", usuarioAtualizado
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -57,9 +57,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> buscarPorId(@PathVariable Long id) {
         // Aqui você chama o seu service ou repository
-        User usuario = userService.buscarPorId(id);
+        UserResponseDTO usuario = userService.buscarPorId(id);
 
         return ResponseEntity.ok(new ApiResponse<>(
                 "Usuário encontrado com sucesso",
