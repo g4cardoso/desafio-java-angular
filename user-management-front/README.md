@@ -1,31 +1,17 @@
-# UserManagementFront
+# Front-end: Gerenciamento de Usuários (First Decision)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+Este projeto é a interface de usuário (SPA) desenvolvida em **Angular 21** para o desafio técnico da First Decision. Ele consome a API RESTful construída em Java/Spring Boot.
 
-## Development server
+## Pré-requisitos
 
-Para executar o projeto de forma local
+Antes de começar, certifique-se de ter o [Node.js](https://nodejs.org/) instalado na sua máquina.
 
+1. Navegue até a pasta do front-end: `cd user-management-front`
+2. Instale as dependências do projeto:
 ```bash
-ng serve
+npm install
 ```
-Como Executar a Aplicação Frontend
-
-- Após garantir que o seu backend em Java 21 e o banco de dados estejam rodando corretamente:
-
-- Acesse a aplicação: Com o servidor de desenvolvimento ativo, abra o seu navegador e navegue para http://localhost:4200/.
-
-- Live Reload: A aplicação será recarregada automaticamente sempre que você modificar e salvar qualquer um dos arquivos de código-fonte.
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-
-## Executar teste unitarios 
-
-Para executar os testes unitários com o executor de testes [Vitest](https://vitest.dev/), utilize o seguinte comando:
-
+3. execute o projeto.
 ```bash
-ng test
+npm start
 ```
-
-
-
