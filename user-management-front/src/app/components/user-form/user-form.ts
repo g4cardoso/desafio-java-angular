@@ -70,6 +70,9 @@ export class UserFormComponent implements OnInit {
             if (result.isConfirmed) {
               const rota = this.idEdicaoUsuario ? '/usuario' : '/cadastro';
               this.router.navigate([rota]);
+              if (!this.idEdicaoUsuario) {
+                window.location.reload();
+              }
             }
           });
         },
