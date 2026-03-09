@@ -22,7 +22,6 @@ export class UserListComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.carregarUsuarios();
-    console.log('Componente de lista carregado!');
   }
 
   carregarUsuarios() {

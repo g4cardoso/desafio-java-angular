@@ -1,13 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { UserFormComponent } from './user-form';
 import { UserService } from '../../services/user';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { UserFormComponent } from './user-form';
 
-describe('UserFormComponent', () => {
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // depreciado
+    removeListener: vi.fn(), // depreciado
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+describe('UserFormComponent - Fluxo de Cadastro', () => {
   let component: UserFormComponent;
   let fixture: ComponentFixture<UserFormComponent>;
   let userService: UserService;
@@ -19,11 +32,15 @@ describe('UserFormComponent', () => {
         UserService,
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([]),
-        // Mock do ActivatedRoute para simular parâmetros de URL
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => null } } },
+          useValue: {
+            snapshot: { params: {} },
+          },
+        },
+        {
+          provide: Router,
+          useValue: { navigate: vi.fn() },
         },
       ],
     }).compileComponents();
@@ -31,30 +48,43 @@ describe('UserFormComponent', () => {
     fixture = TestBed.createComponent(UserFormComponent);
     component = fixture.componentInstance;
     userService = TestBed.inject(UserService);
+
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component.form.value).toEqual({ nome: '', email: '', senha: '' });
+  it('tela vazia', () => {
+    expect(component).toBeTruthy();
+    expect(component.form.getRawValue()).toEqual({
+      nome: '',
+      email: '',
+      senha: '',
+      confirmacaoSenha: '',
+    });
   });
 
-  it('deve chamar o serviço de salvar quando o formulário for válido', () => {
-
+  it('cadastrar usuario', () => {
     const mockResponse = {
-      mensagem: 'Sucesso',
-      dados: { id: 1, nome: 'Gabriel', email: 'gabriel@teste.com' }, // O campo 'dados' é obrigatório!
+      mensagem: 'Usuário cadastrado com sucesso',
+      dados: {
+        id: 1,
+        nome: 'Gabriel Cardoso',
+        email: 'gabriel@teste.com',
+      },
     };
-    const spy = vi.spyOn(userService, 'salvar').mockReturnValue(of(mockResponse));
+    const spySalvar = vi.spyOn(userService, 'salvar').mockReturnValue(of(mockResponse));
 
-    // Preenchemos o formulário
-    component.form.setValue({
+    component.form.patchValue({
       nome: 'Gabriel Cardoso',
       email: 'gabriel@teste.com',
-      senha: '123',
+      senha: 'password123',
+      confirmacaoSenha: 'password123',
     });
+
+    expect(component.form.valid).toBe(true);
 
     component.salvar();
 
-    expect(spy).toHaveBeenCalled();
+    expect(spySalvar).toHaveBeenCalledTimes(1);
+    expect(spySalvar).toHaveBeenCalledWith(component.form.getRawValue());
   });
 });

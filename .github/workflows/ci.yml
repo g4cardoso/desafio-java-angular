@@ -47,6 +47,28 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
           SPRING_DATASOURCE_USERNAME: user
           SPRING_DATASOURCE_PASSWORD: password
+          
+      # --- INÍCIO DOS PASSOS DO FRONT-END ---
+
+      # 3.1. Preparação do ambiente Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Compatível com o seu Angular 21
+          cache: 'npm'
+          cache-dependency-path: './user-management-front/package-lock.json'
+
+      # 3.2. Instalação de dependências do Angular
+      - name: Install Frontend Dependencies
+        working-directory: ./user-management-front
+        run: npm install
+
+      # 3.3. Execução dos Testes Unitários do Front-end
+      - name: Test Frontend (Vitest)
+        working-directory: ./user-management-front
+        run: npm run test:ci
+
+      # --- FIM DOS PASSOS DO FRONT-END ---
 
       # 4. Build da imagem Docker da aplicação [cite: 72]
       - name: Build Docker Image

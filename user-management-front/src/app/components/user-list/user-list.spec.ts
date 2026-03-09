@@ -6,6 +6,20 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
 
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
@@ -58,6 +72,6 @@ describe('UserListComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(spy).toHaveBeenCalledWith(10);
+    expect(spy).toHaveBeenCalledWith(10, 'Teste');
   });
 });
